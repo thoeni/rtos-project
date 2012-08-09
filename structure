@@ -1,1 +1,19 @@
 BOSP
+	|_p2012/
+	|	|_AndroidBoard.mk
+	|	|_AndroidProducts.mk
+	|	|_BoardConfig.mk
+	|	|_device.mk
+	|	|_full_p2012.mk
+	|	|_system.prop
+	|	|_vendorsetup.sh
+	|_p2012-common/
+	|	|_bosp_p2012.mk
+	|	|_init.rc
+	|	|_lib/
+	|		|_Android.mk
+	|		|_rtlib/
+	|			|_Android.mk
+	|			|_rtlib.h
+	|			|_rtlib.c
+	|_p2012-sdk_addon/

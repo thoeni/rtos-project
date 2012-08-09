@@ -488,3 +488,8 @@ service mrknlogd /system/bin/mrknlogd 60
     user system
     group log
     oneshot
+
+service bbqued /system/bin/bbqued 15
+    class main
+    user system
+    oneshot

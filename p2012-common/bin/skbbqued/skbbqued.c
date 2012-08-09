@@ -1,3 +1,5 @@
+//TODO: come dal client, di conseguenza. Probabilmente ha senso rinominare il demone.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
