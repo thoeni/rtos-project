@@ -31,10 +31,8 @@ public class BbqueActivity extends Activity implements Runnable, View.OnClickLis
     less_core_button.setOnClickListener(this);
     Button free_core_button = (Button)super.findViewById(R.id.free_core_button);
     free_core_button.setOnClickListener(this);
-
 /*	 Button more_core_button = (Button)super.findViewById(R.id.more_core_button);
-    more_core_button.setOnClickListener(this);
-*/
+    more_core_button.setOnClickListener(this); */
     this.handler = new Handler();
   }
 
@@ -51,6 +49,7 @@ public class BbqueActivity extends Activity implements Runnable, View.OnClickLis
   @Override
   public void onPause() {
     super.onPause();
+    //TODO: Maybe this has to be modified
     this.handler.removeCallbacks(this);
   }
 
@@ -63,22 +62,26 @@ public class BbqueActivity extends Activity implements Runnable, View.OnClickLis
   public void onClick(View view) {
        switch(view.getId()) {
            case R.id.num_core_button:
-           		this.bbqueManager.getNumCore();
+           		this.output.setText(super.getString(R.string.bbque_message, this.bbqueManager.getNumCore()));
+           		//this.bbqueManager.getNumCore();
            break;
            case R.id.more_core_button:
-					this.bbqueManager.getMoreCore();
+					this.output.setText(super.getString(R.string.bbque_message, this.bbqueManager.getMoreCore()));
+					//this.bbqueManager.getMoreCore();
            break;
            case R.id.less_core_button:
-           		this.bbqueManager.getLessCore();
+           		this.output.setText(super.getString(R.string.bbque_message, this.bbqueManager.getLessCore()));
+           		//this.bbqueManager.getLessCore();
            break;
            case R.id.free_core_button:
-           		this.bbqueManager.freeCore();
+           		this.output.setText(super.getString(R.string.bbque_message, this.bbqueManager.freeCore()));
+           		//this.bbqueManager.freeCore();
            break;
        }
    }
    
   public void run() {
     this.updateOutput();
-    this.handler.postDelayed(this, 1000);
+  //  this.handler.postDelayed(this, 2000);
   }
 }
