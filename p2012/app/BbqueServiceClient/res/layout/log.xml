@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical" android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+  <TextView android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:gravity="center" android:id="@+id/output" />
+  <Button android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:id="@+id/num_core_button" android:text="@string/num_core_button"/>
+  <Button android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:id="@+id/more_core_button" android:text="@string/more_core_button"/>
+  <Button android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:id="@+id/less_core_button" android:text="@string/less_core_button"/>
+  <Button android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:id="@+id/free_core_button" android:text="@string/free_core_button"/>
+</LinearLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Barbeque Service Client</string>
+  <string name="bbque_message">Current number of free cores: %1$d</string>
+  <string name="num_core_button">Refresh number cores</string>
+  <string name="more_core_button">Ask for one more core</string>
+  <string name="less_core_button">Release one core</string>
+  <string name="free_core_button">Free all cores</string>
+</resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bbque_permission_label">Bbque</string>
+  <string name="bbque_permission_description">Applications with this permission will be able to dialogue with a real time resource manager</string>
+</resources>

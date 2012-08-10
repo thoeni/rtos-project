@@ -23,4 +23,7 @@ PRODUCT_PACKAGES += \
         com.bbque.android.lib \
         com.bbque.android.lib.xml \
         libbbque_jni
-
+PRODUCT_PACKAGES += \
+        com.bbque.android.service \
+        com.bbque.android.service.xml
+PRODUCT_PACKAGES += BbqueService
