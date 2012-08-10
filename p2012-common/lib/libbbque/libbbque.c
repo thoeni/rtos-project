@@ -36,11 +36,7 @@ int send_message_to_bbqued (char* cmd, int* nest) {
 		return -1;
 	}
 	//Receiving ack from the server
-	if (recv(sockfd, buf, 2, 0) > 0)
-	{
-		printf("%s", buf);
-	}
-	else
+	if (recv(sockfd, buf, 2, 0) <= 0)
 	{
 		LOGE("Connection to bbqued interrupted!");
 		return -1;
@@ -78,7 +74,7 @@ extern int ask_more_core() {
 	return core_number;
 }
 
-extern int ask_les_core() {
+extern int ask_less_core() {
 	int core_number;
 	if (send_message_to_bbqued("less", &core_number) >= 0)
 		printf("ask_less_core() received: %d", core_number);

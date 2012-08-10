@@ -19,4 +19,8 @@ PRODUCT_PACKAGES += MrknLogService
 PRODUCT_PACKAGES += libbbque
 PRODUCT_PACKAGES += bbclient
 PRODUCT_PACKAGES += bbqued
+PRODUCT_PACKAGES += \
+        com.bbque.android.lib \
+        com.bbque.android.lib.xml \
+        libbbque_jni
 
