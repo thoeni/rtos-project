@@ -1,5 +1,3 @@
-//TODO: come dal client, di conseguenza. Probabilmente ha senso rinominare il demone.
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -15,8 +13,9 @@
 #define NAME "BBQUED DAEMON"
 #define SERVER_PORT 1313
 #define MESSAGE_LENGTH 8
+#define MAX_CORE 16
 
-int core_number = 16;
+int core_number = MAX_CORE;
 
 void *talker( void *arg )
 {
@@ -34,13 +33,21 @@ int 	i;
    }
    else if ( ( strncmp(inputline,"more",4) ) == 0){
    		/* use a mutex to update the global service counter */
-			core_number--;
+   		if (core_number > 0)
+				core_number--;
 			sprintf(inputline, "%d", core_number);
       	send (fd, inputline, 4, 0);
    }
    else if ( ( strncmp(inputline,"less",4) ) == 0){
    		/* use a mutex to update the global service counter */
-			core_number++;
+   		if (core_number < MAX_CORE)
+				core_number++;
+			sprintf(inputline, "%d", core_number);
+      	send (fd, inputline, 4, 0);
+   }
+   else if ( ( strncmp(inputline,"free",4) ) == 0){
+   		/* use a mutex to update the global service counter */
+			core_number = MAX_CORE;
 			sprintf(inputline, "%d", core_number);
       	send (fd, inputline, 4, 0);
    }

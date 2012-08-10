@@ -1,4 +1,4 @@
-#define LOG_TAG "libbbque"
+#define LOG_TAG "LIBBBQUE"
 
 #include   <stdio.h>
 #include   <stdlib.h>
@@ -16,16 +16,15 @@
 #define SERVER_PORT 1313
 
 extern int get_core_availability() {
-	//Add some controls
-	send_message_to_bbqued("core", &core_number);
-	printf("Core number in get_core_availability(): %d", core_number);
+	int core_number = -1;
+	if (send_message_to_bbqued("core", &core_number) >= 0)
+		printf("Core number in get_core_availability(): %d", core_number);
 	return core_number;
 }
 
 extern int send_message_to_bbqued (char* cmd, int* nest) {
 	char* command = cmd;
 	int sockfd;
-	//struct sockaddr_in server={AF_INET,htons(SERVER_PORT),INADDR_ANY};
 	struct sockaddr_in server;
 	server.sin_family = AF_INET;
 	server.sin_port = htons(SERVER_PORT);
@@ -34,52 +33,43 @@ extern int send_message_to_bbqued (char* cmd, int* nest) {
 	char buf[MAXLENGTH] = "", c;
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 	{
-		perror("chiamata alla system call socket fallita");
+		LOGE("Socket opening failed!");
 		return -1;
 	}
-	/* connessione al server */
+	//Connection
 	if (connect(sockfd, (struct sockaddr *) &server, sizeof server) == -1)
 	{
-		perror("connessione al server fallita");
+		LOGE("Socket connection failed!");
 		return -1;
 	}
-	/* ricezione e stampa a video del messaggio di benvenuto del server */
+	//Receiving ack from the server
 	if (recv(sockfd, buf, 2, 0) > 0)
 	{
 		printf("%s", buf);
 	}
 	else
 	{
-		perror("Connessione al server interrotta");
+		LOGE("Connection to bbqued interrupted!");
 		return -1;
 	}
-	/* acquisizione della stringa da standard input */
-	/*printf("\nDigita una stringa:");
-	while ((c = getchar()) != '\n' && i < MAXLENGTH)
-	buf[i++] = c;
-	buf[i] = '\0';
-	len = strlen(buf);*/
 	len = strlen(command);
-	printf("Invio la stringa %s di lunghezza %d sul socket %d...\n",command,len,sockfd);
-	/* invio e ricezione della stringa */
+	//Sending command to the server
 	if (send(sockfd, command, len, 0) == -1)
 	{
-		perror("Errore nell'invio della stringa al server");
+		LOGE("Error while sending command to bbqued server!");
 		return -1;
 	}
-	 
+	//Receiving response from the server
 	if (recv(sockfd, buf, len, 0) > 0)
 	{
-		printf("Il server risponde %s\n", buf);
+		LOGI("Response from bbqued received\n");
 		*nest = atoi(buf);
 	}
 	else
 	{
-		perror("Connessione al server interrotta");
+		LOGE("Connection to bbqued interrupted!");
 		return -1;
 	}
-
-	/* chiusura della connessione */
 	close(sockfd);
 	return 0;
 }
