@@ -5,8 +5,9 @@
 extern "C" {
 #endif
 
-extern int bbq_send_message_to_rtrm(char*);
-extern int bbq_send_message_to_app(char*);
+extern int get_core_availability();
+extern int send_message_to_bbqued(char*, int*);
+extern int send_message_to_app(char*);
 
 #ifdef __cplusplus
 }  /* End of the 'extern "C"' block */

@@ -55,45 +55,40 @@ int 	i;
 
 int main (int argc, char **argv)
 {
-  int sock, client_len, fd, len;
-  char inputline[MESSAGE_LENGTH];
-  struct sockaddr_in server, client;
-  pthread_t thread[50];
-  int i = 1;
- 
-  /* transport end point */
-  if ((sock = socket (AF_INET, SOCK_STREAM, 0)) == -1)
-    {
-      LOGE("Socket creation failed %s:", NAME);
-      return 1;
-    }
- 
-  server.sin_family = AF_INET;
-  server.sin_addr.s_addr = INADDR_ANY;
-  server.sin_port = htons (SERVER_PORT);
- 
-  /* address binding */
-  if (bind (sock, (struct sockaddr *) &server, sizeof server) == -1)
-    {
-      LOGE("Bind failed %s", NAME);
-      return 1;
-    }
- 
-  listen (sock, 1);
- 
-  /* gestione delle connessioni dei client */
-  while (1)
-    {
-      client_len = sizeof (client);
-      if ((fd = accept (sock, (struct sockaddr *) &client, &client_len)) < 0)
-    {
-      LOGE("%s - accepting connection error", NAME);
-      return 1;
-    }
-    	/* create a new thread to process the incomming request */
+	int sock, client_len, fd, len;
+	char inputline[MESSAGE_LENGTH];
+	struct sockaddr_in server, client;
+	pthread_t thread[50];
+	int i = 1;
+	/* transport end point */
+	if ((sock = socket (AF_INET, SOCK_STREAM, 0)) == -1)
+	{
+		LOGE("Socket creation failed %s:", NAME);
+		return -1;
+	}
+	server.sin_family = AF_INET;
+	server.sin_addr.s_addr = INADDR_ANY;
+	server.sin_port = htons (SERVER_PORT);
+	/* address binding */
+	if (bind (sock, (struct sockaddr *) &server, sizeof server) == -1)
+	{
+		LOGE("Bind failed %s", NAME);
+		return 1;
+	}
+	listen (sock, 1);
+	/* gestione delle connessioni dei client */
+	while (1)
+	{
+		client_len = sizeof (client);
+		if ((fd = accept (sock, (struct sockaddr *) &client, &client_len)) < 0) 
+		{
+			LOGE("%s - accepting connection error", NAME);
+			return 1;
+		}
+		/* create a new thread to process the incomming request */
 		LOGI("Connection accepted - creating thread...\n");
 		pthread_create( &(thread[i++]), NULL, talker, (void*)fd );
 		//If core_number less than 5, signal to app.
-    }
-   return 0;
+	}
+	return 0;
 }
