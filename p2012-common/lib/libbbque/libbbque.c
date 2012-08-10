@@ -15,14 +15,7 @@
 #define MAXLENGTH 8
 #define SERVER_PORT 1313
 
-extern int get_core_availability() {
-	int core_number = -1;
-	if (send_message_to_bbqued("core", &core_number) >= 0)
-		printf("Core number in get_core_availability(): %d", core_number);
-	return core_number;
-}
-
-extern int send_message_to_bbqued (char* cmd, int* nest) {
+int send_message_to_bbqued (char* cmd, int* nest) {
 	char* command = cmd;
 	int sockfd;
 	struct sockaddr_in server;
@@ -61,10 +54,7 @@ extern int send_message_to_bbqued (char* cmd, int* nest) {
 	}
 	//Receiving response from the server
 	if (recv(sockfd, buf, len, 0) > 0)
-	{
-		LOGI("Response from bbqued received\n");
 		*nest = atoi(buf);
-	}
 	else
 	{
 		LOGE("Connection to bbqued interrupted!");
@@ -72,6 +62,34 @@ extern int send_message_to_bbqued (char* cmd, int* nest) {
 	}
 	close(sockfd);
 	return 0;
+}
+
+extern int get_core_availability() {
+	int core_number = -1;
+	if (send_message_to_bbqued("core", &core_number) >= 0)
+		LOGI("get_core_availability() received: %d", core_number);
+	return core_number;
+}
+
+extern int ask_more_core() {
+	int core_number;
+	if (send_message_to_bbqued("more", &core_number) >= 0)
+		printf("ask_more_core() received: %d", core_number);
+	return core_number;
+}
+
+extern int ask_les_core() {
+	int core_number;
+	if (send_message_to_bbqued("less", &core_number) >= 0)
+		printf("ask_less_core() received: %d", core_number);
+	return core_number;
+}
+
+extern int free_core() {
+	int core_number;
+	if (send_message_to_bbqued("free", &core_number) >= 0)
+		printf("free_core() received: %d", core_number);
+	return core_number;
 }
 
 extern int send_message_to_app(char *c) {

@@ -6,7 +6,9 @@ extern "C" {
 #endif
 
 extern int get_core_availability();
-extern int send_message_to_bbqued(char*, int*);
+extern int ask_more_core();
+extern int ask_less_core();
+extern int free_core();
 extern int send_message_to_app(char*);
 
 #ifdef __cplusplus

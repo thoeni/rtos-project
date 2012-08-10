@@ -10,7 +10,7 @@
 #include <cutils/log.h>
 #include	<errno.h>
 
-#define NAME "BBQUED DAEMON"
+#define LOG_TAG "BBQUED DAEMON"
 #define SERVER_PORT 1313
 #define MESSAGE_LENGTH 8
 #define MAX_CORE 16
@@ -70,7 +70,7 @@ int main (int argc, char **argv)
 	/* transport end point */
 	if ((sock = socket (AF_INET, SOCK_STREAM, 0)) == -1)
 	{
-		LOGE("Socket creation failed %s:", NAME);
+		LOGE("Socket creation failed.");
 		return -1;
 	}
 	server.sin_family = AF_INET;
@@ -79,7 +79,7 @@ int main (int argc, char **argv)
 	/* address binding */
 	if (bind (sock, (struct sockaddr *) &server, sizeof server) == -1)
 	{
-		LOGE("Bind failed %s", NAME);
+		LOGE("Bind failed");
 		return 1;
 	}
 	listen (sock, 1);
@@ -89,7 +89,7 @@ int main (int argc, char **argv)
 		client_len = sizeof (client);
 		if ((fd = accept (sock, (struct sockaddr *) &client, &client_len)) < 0) 
 		{
-			LOGE("%s - accepting connection error", NAME);
+			LOGE("Accepting connection error.");
 			return 1;
 		}
 		/* create a new thread to process the incomming request */
