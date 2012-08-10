@@ -18,7 +18,11 @@
  
 int main (int argc, char **argv) {
   int sockfd;
-  struct sockaddr_in server={AF_INET,htons(SERVER_PORT),INADDR_ANY};
+  //struct sockaddr_in server={AF_INET,htons(SERVER_PORT),INADDR_ANY};
+  struct sockaddr_in server;
+  server.sin_family = AF_INET;
+  server.sin_port = htons(SERVER_PORT);
+  server.sin_addr.s_addr = htonl(INADDR_ANY);
   int i = 0, len;
   char buf[MAXLENGTH] = "", c;
  

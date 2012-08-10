@@ -15,9 +15,8 @@ PRODUCT_PACKAGES += \
         com.marakana.android.service.log.xml
 PRODUCT_PACKAGES += MrknLogService
 
-#BOSP EXAMPLE PACKAGES
+#BOSP PACKAGES
 PRODUCT_PACKAGES += libbbque
+PRODUCT_PACKAGES += bbclient
 PRODUCT_PACKAGES += bbqued
-PRODUCT_PACKAGES += skbbqued
-PRODUCT_PACKAGES += skclient
 

@@ -1,19 +1,26 @@
-BOSP
-	|_p2012/
-	|	|_AndroidBoard.mk
-	|	|_AndroidProducts.mk
-	|	|_BoardConfig.mk
-	|	|_device.mk
-	|	|_full_p2012.mk
-	|	|_system.prop
-	|	|_vendorsetup.sh
-	|_p2012-common/
-	|	|_bosp_p2012.mk
-	|	|_init.rc
-	|	|_lib/
-	|		|_Android.mk
-	|		|_rtlib/
-	|			|_Android.mk
-	|			|_rtlib.h
-	|			|_rtlib.c
-	|_p2012-sdk_addon/
+	 1.......BOSP
+	 2.......|_p2012/
+	 3.......|..|_AndroidBoard.mk
+	 4.......|..|_AndroidProducts.mk
+	 5.......|..|_BoardConfig.mk
+	 6.......|..|_device.mk
+	 7.......|..|_full_p2012.mk
+	 8.......|..|_system.prop
+	 9.......|..|_vendorsetup.sh
+	10.......|_p2012-common/
+	11.......|..|_bosp_p2012.mk
+	12.......|..|_init.rc
+	13.......|..|_lib/
+	14.......|..|..|_Android.mk
+	15.......|..|..|_rtlib/
+	16.......|..|.....|_Android.mk
+	17.......|..|.....|_libbbque.h
+	18.......|..|.....|_libbbque.c
+	19.......|..|_bin/
+	20.......|..|..|_Android.mk
+	21.......|..|..|_bbqued/
+	22.......|..|.....|_Android.mk
+	23.......|..|.....|_bbqued.c
+	24.......|_p2012-sdk_addon/
+	
+	
