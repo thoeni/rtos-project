@@ -1,26 +1,91 @@
-	 1.......BOSP
-	 2.......|_p2012/
-	 3.......|..|_AndroidBoard.mk
-	 4.......|..|_AndroidProducts.mk
-	 5.......|..|_BoardConfig.mk
-	 6.......|..|_device.mk
-	 7.......|..|_full_p2012.mk
-	 8.......|..|_system.prop
-	 9.......|..|_vendorsetup.sh
-	10.......|_p2012-common/
-	11.......|..|_bosp_p2012.mk
-	12.......|..|_init.rc
-	13.......|..|_lib/
-	14.......|..|..|_Android.mk
-	15.......|..|..|_rtlib/
-	16.......|..|.....|_Android.mk
-	17.......|..|.....|_libbbque.h
-	18.......|..|.....|_libbbque.c
-	19.......|..|_bin/
-	20.......|..|..|_Android.mk
-	21.......|..|..|_bbqued/
-	22.......|..|.....|_Android.mk
-	23.......|..|.....|_bbqued.c
-	24.......|_p2012-sdk_addon/
-	
-	
+.
+├── p2012
+│   ├── AndroidBoard.mk
+│   ├── AndroidProducts.mk
+│   ├── app
+│   │   └── BbqueServiceClient...............................: This folder contains the whole structure of the Java App
+│   │       ├── AndroidManifest.xml..........................: 
+│   │       ├── Android.mk
+│   │       ├── res
+│   │       │   ├── drawable-hdpi
+│   │       │   │   └── ic_launcher_bbq.png
+│   │       │   ├── drawable-ldpi
+│   │       │   │   └── ic_launcher_bbq.png
+│   │       │   ├── drawable-mdpi
+│   │       │   │   └── ic_launcher_bbq.png
+│   │       │   ├── drawable-xhdpi
+│   │       │   │   └── ic_launcher_bbq.png
+│   │       │   ├── layout
+│   │       │   │   └── log.xml
+│   │       │   └── values
+│   │       │       └── strings.xml
+│   │       └── src
+│   │           └── com
+│   │               └── bbque
+│   │                   └── android
+│   │                       └── bbqueserviceclient
+│   │                           └── BbqueActivity.java
+│   ├── BoardConfig.mk
+│   ├── device.mk
+│   ├── full_p2012.mk
+│   ├── system.prop
+│   └── vendorsetup.sh
+├── p2012-common
+│   ├── app
+│   │   ├── Android.mk
+│   │   └── BbqueService
+│   │       ├── AndroidManifest.xml
+│   │       ├── Android.mk
+│   │       ├── res
+│   │       │   └── values
+│   │       │       └── strings.xml
+│   │       └── src
+│   │           └── com
+│   │               └── bbque
+│   │                   └── android
+│   │                       └── bbqueservice
+│   │                           ├── BbqueServiceApp.java
+│   │                           └── IBbqueServiceImpl.java...:
+│   ├── bin
+│   │   ├── Android.mk
+│   │   └── bbqued
+│   │       ├── Android.mk
+│   │       └── bbqued.c
+│   ├── bosp_p2012.mk
+│   ├── framework
+│   │   ├── Android.mk
+│   │   ├── bbque_jni
+│   │   │   ├── Android.mk
+│   │   │   ├── java
+│   │   │   │   ├── Android.mk
+│   │   │   │   ├── com
+│   │   │   │   │   └── bbque
+│   │   │   │   │       └── android
+│   │   │   │   │           └── lib
+│   │   │   │   │               ├── LibBbqueException.java
+│   │   │   │   │               ├── LibBbque.java
+│   │   │   │   │               └── Main.java
+│   │   │   │   └── com.bbque.android.lib.xml
+│   │   │   └── jni
+│   │   │       ├── Android.mk
+│   │   │       ├── com_bbque_android_lib_LibBbque.c
+│   │   │       └── com_bbque_android_lib_LibBbque.h
+│   │   └── bbqueservice
+│   │       ├── Android.mk
+│   │       ├── com
+│   │       │   └── bbque
+│   │       │       └── android
+│   │       │           └── service
+│   │       │               ├── BbqueManager.java
+│   │       │               └── IBbqueService.aidl
+│   │       └── com.bbque.android.service.xml
+│   ├── init.rc
+│   └── lib
+│       ├── Android.mk
+│       └── libbbque
+│           ├── Android.mk
+│           ├── libbbque.c
+│           └── libbbque.h
+└── structure
+
+42 directories, 46 files
