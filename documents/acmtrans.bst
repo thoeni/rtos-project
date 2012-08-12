@@ -1078,6 +1078,7 @@ FUNCTION {book}
     }
   if$
   output.year.check       % added
+  month output %thoeni
   new.block
   format.btitle
   "title" output.check

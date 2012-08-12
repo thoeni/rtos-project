@@ -799,22 +799,22 @@ the#1\endcsname{\@thmcounter{#1}}\global
 \let\l@table\l@figure
 
 
-\def\thebibliography#1{\par\footnotesize 
-\@ucheadfalse
-\@startsection{subsection}{2}{\z@}{16pt plus 2pt minus 
-        1pt}{2pt}{\sf}*{REFERENCES}%
-\list{\arabic{enumi}.}{%
- \settowidth{\labelwidth}{99.}%
- \leftmargin\labelwidth
- \advance\leftmargin\labelsep \topsep \z@ \parsep 0pt plus .1pt
- \itemsep \parsep 
- \usecounter{enumi}}%
- \def\newblock{\hskip .11em plus .33em minus .07em}
- \sloppy
- \widowpenalty=4500
- \clubpenalty=4500
- \sfcode`\.=1000\relax}
-\let\endthebibliography=\endlist
+%\def\thebibliography#1{\par\footnotesize 
+%\@ucheadfalse
+%\@startsection{subsection}{2}{\z@}{16pt plus 2pt minus 
+%        1pt}{2pt}{\sf}*{REFERENCES}%
+%\list{\arabic{enumi}.}{%
+% \settowidth{\labelwidth}{99.}%
+% \leftmargin\labelwidth
+% \advance\leftmargin\labelsep \topsep \z@ \parsep 0pt plus .1pt
+% \itemsep \parsep 
+% \usecounter{enumi}}%
+% \def\newblock{\hskip .11em plus .33em minus .07em}
+% \sloppy
+% \widowpenalty=4500
+% \clubpenalty=4500
+% \sfcode`\.=1000\relax}
+%\let\endthebibliography=\endlist
  
 
 \newif\if@restonecol
@@ -1051,10 +1051,10 @@ to\hsize{\if@nfeven\else\hfil\fi\box\@tempboxa\if@nfeven\hfil\fi}
 \mark{{}{}} 
 
 \def\ps@myheadings{\let\@mkboth\@gobbletwo
-\def\@oddhead{\hbox{}\hfill \small\sf \rightmark\hskip
-19pt{\Large$\cdot$}\hskip 17pt\mypage}
+\def\@oddhead{\hbox{}\hfill \small\sf \rightmark \hskip 19pt{\Large$\cdot$}\hskip 17pt\mypage}
+\def\@evenhead{\hbox{}\hfill \small\sf \rightmark \hskip 19pt{\Large$\cdot$}\hskip 17pt\mypage}
 \def\@oddfoot{\hbox{}\hfill\tiny\@runningfoot}
-\def\@evenhead{\small\sf\mypage \hskip 17pt{\Large$\cdot$}\hskip 19pt\leftmark\hfill \hbox{}}
+%\def\@evenhead{\small\sf\mypage \hskip 19pt{\Large$\cdot$}\hskip 19pt \rightmark \hfill \hbox{}}
 \def\@evenfoot{\tiny\@runningfoot\hfill\hbox{}}
 \def\sectionmark##1{}\def\subsectionmark##1{}}
 \def\@runningfoot{}
