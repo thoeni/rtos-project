@@ -9,14 +9,15 @@
 %\newdef{remark}[theorem]{Remark}
 
 \usepackage[dvips]{color}
-\usepackage{graphicx}           
+\usepackage{graphicx}
 
 \title{Exploring Android Stack by implementing a complete flow, from Java application layer to native library}
             
 \author{ANTONIO TROINA\\Politecnico di Milano}
             
 \begin{abstract} 
-This paper aims to describe, through a convienient and properly documented example, the necessary steps to break into the Android stack, and implement a customised native daemon - which relies on his own native library - that can communicate with a Java application (and the other way around) through the Java Native Interface.
+This paper aims to describe, through a convienient and properly documented example, the necessary steps to break into the Android stack, and implement a customised native daemon - which relies on his own native library - that can communicate with a Java application (and the other way around) through the Java Native Interface.\\
+The first part of this work will cover the Android stack, with a general overview of its main components, while the second part will propose a basic implementation of a client-server paradigm, whose actors will be a Java-coded app (client) and a C-coded daemon (server).
 \end{abstract}
             
 \category{D.4.7}{Real-time systems and embedded systems}{Android}
@@ -30,6 +31,7 @@ This paper aims to describe, through a convienient and properly documented examp
 %\mbox{}
 
 \include{introduction}
+\include{overview}
 
 \bibliographystyle{acmtrans}
 \bibliography{myrefs}
