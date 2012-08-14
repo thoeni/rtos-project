@@ -12,7 +12,6 @@ PRODUCT_MODEL := Full BBQUE P2012 Image for Emulator
 
 # Include the common definition and packages
 include $(LOCAL_PATH)/../p2012-common/bosp_p2012.mk
-#PRODUCT_PACKAGES += MrknLogServiceClient
 PRODUCT_PACKAGES += BbqueServiceClient
 
 include $(call all-makefiles-under,$(LOCAL_PATH))

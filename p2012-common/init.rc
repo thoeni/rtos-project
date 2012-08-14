@@ -482,13 +482,6 @@ service dumpstate /system/bin/dumpstate -s
     socket dumpstate stream 0660 shell log
     disabled
     oneshot
-    
-# Marakana's custom log-flushing daemon
-service mrknlogd /system/bin/mrknlogd 60
-    class main
-    user system
-    group log
-    oneshot
 
 # Bosp service daemon
 service bbqued /system/bin/bbqued
