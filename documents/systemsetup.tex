@@ -12,28 +12,29 @@ Leaving aside the default recommendations by the AOSP webpage, let's see what ac
 \item \textbf{Java Development Kit}\\
 The android source suggests to install, among the others, the OpenJDK package:
 	\begin{verbatim}
-		sudo apt-get install openjdk-6-jdk
+		$ sudo apt-get install openjdk-6-jdk
 	\end{verbatim}
 This didn't work, since I found out that Android 2.3+ requires Java 6 to build correctly. While OpenJDK did work for 2.3, it doesn't for Android 4.0: you need Sun Java Development Kit. A solution is to download the JDK 1.6 binary release from Sun's Java download site and unzip it somewhere in your system, for example:
 	\begin{verbatim}
-		sudo mkdir -p /opt/java/64/
-		sudo cp jdk-6u33-linux-x64.bin /opt/java/64
-		sudo su -
-		cd /opt/java/64
-		chmod +x jdk-6u29-linux-x64.bin
-		./jdk-6u33-linux-x64.bin
-		exit
+		$ sudo mkdir -p /opt/java/64/
+		$ sudo cp jdk-6u33-linux-x64.bin /opt/java/64
+		$ sudo su -
+		$ cd /opt/java/64
+		$ chmod +x jdk-6u29-linux-x64.bin
+		$ ./jdk-6u33-linux-x64.bin
+		$ exit
 	\end{verbatim}
 Add the new Java to your shell environment's \texttt{\$PATH} so it takes priority over other Javas you might have installed (yes, this means that different JDK can coexist):
 	\begin{verbatim}
-		echo 'export PATH=/opt/java/64/jdk1.6.0_33/bin:$PATH' >> ~/.bashrc
+		$ echo 'export PATH=/opt/java/64/jdk1.6.0_33/bin:$PATH' \
+		       >> ~/.bashrc
 	\end{verbatim}
 If you relaunch your terminal (do it) you should be able to see the change with the command \texttt{java -version}
 \item \textbf{GCC - The Gnu Compiler Collection}\\
 By default I found on my system the latest version of the \texttt{gcc} compiler, which - at the time of this writing is the 4.6: this version presented some fatal errors which didn't let me complete the compilation. A solution has been to install the 4.4 version (as for JDK, two different versions can coexist on the same system).
 	\begin{verbatim}
-		sudo apt-get install gcc-4.4 g++-4.4 \
-		                     g++-4.4-multilib gcc-4.4-multilib
+		$ sudo apt-get install gcc-4.4 g++-4.4 \
+		                       g++-4.4-multilib gcc-4.4-multilib
 	\end{verbatim}
 This works, with the watchfulness of explicitly declare you want to use this specific gcc version at compile time, by passing it as argument to the make command, as follows:
 \definecolor{lightgray}{gray}{0.93}
@@ -41,7 +42,7 @@ This works, with the watchfulness of explicitly declare you want to use this spe
   \par\noindent\colorbox{lightgray}{%
     \begin{minipage}{0.953\textwidth}
 		\textsc{Remember}:\\
-			\texttt{make CC=gcc-4.4 CXX=g++-4.4 -j8}
+			\texttt{\$ make CC=gcc-4.4 CXX=g++-4.4 -j8}
     \end{minipage}%
   }%
   \vskip\baselineskip%
@@ -54,8 +55,8 @@ Since I built and installed other packages during my work, I experienced that th
 		\item libgl1-mesa-glx:i386\\
 		For this one is convenient to do this:
 		\begin{verbatim}
-			sudo ln -s /usr/lib/i386-linux-gnu/mesa/libGL.so.1 \
-			           /usr/lib/i386-linux-gnu/libGL.so
+			$ sudo ln -s /usr/lib/i386-linux-gnu/mesa/libGL.so.1 \
+			             /usr/lib/i386-linux-gnu/libGL.so
 		\end{verbatim}
 	\end{itemize}
 Therefore, if the compilation - that previously was working - suddenly doesn't work anymore, check whether you still have those two libraries and their versions.

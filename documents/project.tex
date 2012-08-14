@@ -37,3 +37,40 @@ Let's briefly see what these folders contain:
 	\item \texttt{p2012-common/framework}: contains two main folders, one includes the whole JNI-related stuff (both C/C++ and Java sources), and the other one comprises the Java source of our specific-service Manager class (which handles the Binding procedure, once created) and the \texttt{.aidl} file, which basically is an interface.
 	\item \texttt{p2012-common/lib}: contains the C/C++ source code for our specific libraries and headers.
 \end{itemize}
+Once we have this basic structure, we can go deeper into details of the configuration files needed by the \textit{make system}.
+\subsection{Configuration files}
+We are mainly operating inside the \texttt{p2012} folder so, unless specified, this will be our working directory for this section.
+\begin{itemize}
+\item At first, we create a file named \texttt{vendorsetup.sh}, which will contain the name of the \textit{lunch-combo} we want to associate to our new device. My file would look like this:
+\begin{verbatim}
+	add_lunch_combo full_bosp_p2012-eng
+\end{verbatim}
+where \texttt{full} indicates that we're starting, as base - from Android build with the most complete set of Application/Services, \texttt{bosp\_p2012} indicates our customised build, \texttt{eng} indicates the development configuration with additional debugging tools.\\
+From within the main \texttt{aosp} directory, if you open a shell and launch the following
+\begin{verbatim}
+	$. build/envsetup.sh
+\end{verbatim}
+you should see the system including the new configuration.
+\item The file \texttt{AndroidProducts.mk} contains the reference to the specific product build makefiles, therefore we indicate here this:
+\begin{verbatim}
+	PRODUCT_MAKEFILES := $(LOCAL_DIR)/full_p2012.mk
+\end{verbatim}
+\item And here a piece of our \texttt{full\_p2012.mk} file
+\begin{verbatim}
+	$(call inherit-product, $(SRC_TARGET_DIR)/product/
+	                        languages_full.mk)
+	$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
+	PRODUCT_NAME := full_p2012
+	PRODUCT_DEVICE := p2012
+	PRODUCT_MODEL := Full BBQUE P2012 Image for Emulator
+	# Include the common definition and packages
+	include $(LOCAL_PATH)/../p2012-common/bosp_p2012.mk
+	include $(call all-makefiles-under,$(LOCAL_PATH))
+\end{verbatim}
+To our scope, to have a more lightweight build, we change \texttt{languages\_full.mk} and \texttt{full\_base.mk} respectively, with \texttt{languages\_small.mk} and \texttt{generic.mk}.\\
+More "flavors" can be found into
+\begin{verbatim}
+	/aosp/build/target/product/
+\end{verbatim}
+
+\end{itemize}
