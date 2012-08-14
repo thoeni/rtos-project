@@ -5,7 +5,7 @@ This work, as stated in the abstract, aims to implement a native daemon (constan
 Since this project is focused on understanding the basics of Android, to afterwards integrate a native RTRM application as a System Service - therefore accessible by the Java environment - I decided to implement this simple daemon as a dummy-RTRM which will communicate with the application the number of available "cores" (actually will be just an \texttt{int}) and allow it to "require" or "release" cores (with a sort of \texttt{core++} and \texttt{core--} functions).
 \subsection{Setting up the directory structure}
 The followed approach has been to keep separate the main code from our customised code, so that our platform-specific code will be compiled when the user will choose to build our specific system, instead of the default one. This choice results in a more atomic and modular way to operate.\\
-In the \texttt{aosp} directory, there's a folder named \texttt{device}, which typically contains folders indicating manifacturers, and into each manifacturer's folder, the specific architecture folder: in our case, I named \texttt{bosp} the manifacturer folder, and \texttt{p2012} the architecture folder. To properly organize files, we have a main \texttt{p2012} folder, and a \texttt{p2012-common} folder, which contains the largest part of our customised code.
+In the \texttt{aosp} directory, there's a folder named \texttt{device}, which typically contains folders indicating manifacturers, and into each manifacturer's folder, the specific architecture folder: in our case, the manifacturer folder has been named \texttt{bosp}, and the architecture folder \texttt{p2012}. To properly organize files, we have a main \texttt{p2012} folder, and a \texttt{p2012-common} folder, which contains the largest part of our customised code.
 \begin{verbatim}
 device/
 ├── bosp/
@@ -17,12 +17,23 @@ device/
 │   │   ├── framework/
 │   │   └── lib/
 \end{verbatim}
-Let's briefly see what these folders will contain:
+Let's briefly see what these folders contain:
 \begin{itemize}
 	\item \texttt{p2012/app}: contains configuration files to identify the board, the architecture, the packages that will be built-in with this version, and the possible "Activities" that will be coded especially for this release.
-	\item \texttt{p2012-common/app}: contains \texttt{ServiceApp} that will register our new service to the \textit{Service Manager} as a remote service, through the call
+	\item \texttt{p2012-common/app}: contains the Java code of the \texttt{ServiceApp} that will register our new service to the \textit{Service Manager} as a remote service, through the call
 	\begin{verbatim}
 		ServiceManager.addService(REMOTE_SERVICE_NAME, this.serviceImpl);
 	\end{verbatim}
 	\item \texttt{p2012-common/bin}: contains the C/C++ code of the \textit{native daemon}. Once exported as local module, its name will be added to the \texttt{init.rc} file, to let it start at bootup stage.
+\definecolor{lightgray}{gray}{0.93}
+  \vskip\baselineskip%
+  \par\noindent\colorbox{lightgray}{%
+    \begin{minipage}{0.953\textwidth}
+		\textsc{Good to know}:\\
+		Any C/C++ source put into this folder (along with the proper \texttt{Android.mk} configuration file), will be compiled by Android's building system and put into device's \texttt{/system/bin} folder, so that will be ready to run within the environment.
+    \end{minipage}%
+  }%
+  \vskip\baselineskip%
+	\item \texttt{p2012-common/framework}: contains two main folders, one includes the whole JNI-related stuff (both C/C++ and Java sources), and the other one comprises the Java source of our specific-service Manager class (which handles the Binding procedure, once created) and the \texttt{.aidl} file, which basically is an interface.
+	\item \texttt{p2012-common/lib}: contains the C/C++ source code for our specific libraries and headers.
 \end{itemize}
