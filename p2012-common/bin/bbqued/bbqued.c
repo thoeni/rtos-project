@@ -6,8 +6,7 @@
 #include <ctype.h>
 #include <pthread.h>
 #include <unistd.h>
-#include <cutils/logger.h>
-#include <cutils/log.h>
+#include <android/log.h>
 #include	<errno.h>
 
 #define LOG_TAG "BBQUED DAEMON"
@@ -22,7 +21,8 @@ void *talker( void *arg )
 int 	fd = (int) arg;
 char 	inputline[MESSAGE_LENGTH];
 int 	i;
-	LOGI("Thread %d: handling communication with client\n", fd);
+	__android_log_write(ANDROID_LOG_INFO, LOG_TAG, "Thread - handling communication with client.");
+	//LOGI("Thread %d: handling communication with client\n", fd);
 	/* send confirmation to client, and read from the given socket */
 	send (fd, "ok", 2, 0);
    recv (fd, inputline, MESSAGE_LENGTH, 0);
@@ -56,7 +56,7 @@ int 	i;
 
 	/* close the socket and exit this thread */
 	close(fd);
-	LOGI("Thread %d: closed communication with client\n", fd);
+	//LOGI("Thread %d: closed communication with client\n", fd);
 	return 0;
 }
 
@@ -70,7 +70,8 @@ int main (int argc, char **argv)
 	/* transport end point */
 	if ((sock = socket (AF_INET, SOCK_STREAM, 0)) == -1)
 	{
-		LOGE("Socket creation failed.");
+		__android_log_write(ANDROID_LOG_INFO, LOG_TAG, "Socket creation failed.");
+		//LOGE("Socket creation failed.");
 		return -1;
 	}
 	server.sin_family = AF_INET;
@@ -79,7 +80,8 @@ int main (int argc, char **argv)
 	/* address binding */
 	if (bind (sock, (struct sockaddr *) &server, sizeof server) == -1)
 	{
-		LOGE("Bind failed");
+		__android_log_write(ANDROID_LOG_INFO, LOG_TAG, "Bind failed.");
+		//LOGE("Bind failed");
 		return 1;
 	}
 	listen (sock, 1);
@@ -89,11 +91,13 @@ int main (int argc, char **argv)
 		client_len = sizeof (client);
 		if ((fd = accept (sock, (struct sockaddr *) &client, &client_len)) < 0) 
 		{
-			LOGE("Accepting connection error.");
+			__android_log_write(ANDROID_LOG_INFO, LOG_TAG, "Accepting connection error.");
+			//LOGE("Accepting connection error.");
 			return 1;
 		}
 		/* create a new thread to process the incomming request */
-		LOGI("Connection accepted - creating thread...\n");
+		__android_log_write(ANDROID_LOG_INFO, LOG_TAG, "Connection accepted, creating thread...");
+		//LOGI("Connection accepted - creating thread...\n");
 		pthread_create( &(thread[i++]), NULL, talker, (void*)fd );
 		//If core_number less than 5, signal to app.
 	}
