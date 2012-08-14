@@ -16,7 +16,7 @@
 \author{ANTONIO TROINA\\Politecnico di Milano}
             
 \begin{abstract} 
-This paper aims to describe, through a convienient and properly documented example, the necessary steps to break into the Android stack, and implement a customised native daemon - which relies on his own native library - that can communicate with a Java application (and the other way around) through the Java Native Interface.\\
+This paper aims to describe, through a convienient and properly documented example, the necessary steps to break into the Android stack, and implement a customised native daemon - which relies on its own native library - that can communicate with a Java application (and the other way around) through the Java Native Interface.\\
 The first part of this work will cover the Android stack, with a general overview of its main components, while the second part will propose a basic implementation of a client-server paradigm, whose actors will be a Java-coded app (client) and a C-coded daemon (server).
 \end{abstract}
             
@@ -32,6 +32,8 @@ The first part of this work will cover the Android stack, with a general overvie
 
 \include{introduction}
 \include{overview}
+\include{systemsetup}
+\include{project}
 
 \bibliographystyle{acmtrans}
 \bibliography{myrefs}

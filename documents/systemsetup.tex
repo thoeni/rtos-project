@@ -1,0 +1,69 @@
+\markright{System setup}
+\section{System setup}
+\label{setup}
+Basically, to have a foundation we can work on, a ready-to-run AOSP system should be setup and properly configured. The most important instructions can be found at the AOSP project website: \texttt{http://source.android.com/}\\
+In this section the basic steps will be presented, especially highlighting the main issues that have been encountered during the development.\\
+\subsection{Initialize the build environment}
+The on-line guide to initialize the system can be found at:\\
+\texttt{http://source.android.com/source/initializing.html}\\
+It is based on Ubuntu LTS (10.04), nevertheless the environment I used was Linux Mint 13, which is based on Ubuntu (12.04).\\
+Leaving aside the default recommendations by the AOSP webpage, let's see what actually went wrong, and how to fix it:
+\begin{itemize}
+\item \textbf{Java Development Kit}\\
+The android source suggests to install, among the others, the OpenJDK package:
+	\begin{verbatim}
+		sudo apt-get install openjdk-6-jdk
+	\end{verbatim}
+This didn't work, since I found out that Android 2.3+ requires Java 6 to build correctly. While OpenJDK did work for 2.3, it doesn't for Android 4.0: you need Sun Java Development Kit. A solution is to download the JDK 1.6 binary release from Sun's Java download site and unzip it somewhere in your system, for example:
+	\begin{verbatim}
+		sudo mkdir -p /opt/java/64/
+		sudo cp jdk-6u33-linux-x64.bin /opt/java/64
+		sudo su -
+		cd /opt/java/64
+		chmod +x jdk-6u29-linux-x64.bin
+		./jdk-6u33-linux-x64.bin
+		exit
+	\end{verbatim}
+Add the new Java to your shell environment's \texttt{\$PATH} so it takes priority over other Javas you might have installed (yes, this means that different JDK can coexist):
+	\begin{verbatim}
+		echo 'export PATH=/opt/java/64/jdk1.6.0_33/bin:$PATH' >> ~/.bashrc
+	\end{verbatim}
+If you relaunch your terminal (do it) you should be able to see the change with the command \texttt{java -version}
+\item \textbf{GCC - The Gnu Compiler Collection}\\
+By default I found on my system the latest version of the \texttt{gcc} compiler, which - at the time of this writing is the 4.6: this version presented some fatal errors which didn't let me complete the compilation. A solution has been to install the 4.4 version (as for JDK, two different versions can coexist on the same system).
+	\begin{verbatim}
+		sudo apt-get install gcc-4.4 g++-4.4 \
+		                     g++-4.4-multilib gcc-4.4-multilib
+	\end{verbatim}
+This works, with the watchfulness of explicitly declare you want to use this specific gcc version at compile time, by passing it as argument to the make command, as follows:
+\definecolor{lightgray}{gray}{0.93}
+  \vskip\baselineskip%
+  \par\noindent\colorbox{lightgray}{%
+    \begin{minipage}{0.953\textwidth}
+		\textsc{Remember}:\\
+			\texttt{make CC=gcc-4.4 CXX=g++-4.4 -j8}
+    \end{minipage}%
+  }%
+  \vskip\baselineskip%
+I put stress on this because I'm sure it can save you time, and prevent you from banging the desktop with your forehead.\\
+The \texttt{-j8} option tells the compiler to launch 8 parallel threads, therefore if you are compiling on a multi-core architecture, this may save you quite a lot of time.
+\item \textbf{Libraries}\\
+Since I built and installed other packages during my work, I experienced that the most commonly replaced ones were:
+	\begin{itemize}
+		\item libncurses5-dev:i386
+		\item libgl1-mesa-glx:i386\\
+		For this one is convenient to do this:
+		\begin{verbatim}
+			sudo ln -s /usr/lib/i386-linux-gnu/mesa/libGL.so.1 \
+			           /usr/lib/i386-linux-gnu/libGL.so
+		\end{verbatim}
+	\end{itemize}
+Therefore, if the compilation - that previously was working - suddenly doesn't work anymore, check whether you still have those two libraries and their versions.
+\end{itemize}
+Last suggestion, as the AOSP website says, it's convenient enabling the \texttt{CCACHE} option, to save time during the following compilations.
+\subsection{Downloading the source tree}
+All instructions to download the source files can be found at this address:\\
+\texttt{http://source.android.com/source/downloading.html}
+\subsection{Building the system}
+All instructions to build the system can be found at this address:\\
+\texttt{http://source.android.com/source/building.html}

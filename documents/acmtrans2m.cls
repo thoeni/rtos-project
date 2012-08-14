@@ -1410,7 +1410,7 @@ The electronic appendix for this article can be accessed in
 % Don't indent bibliography and
 % override \refname (which sets fontsize):
 \def\thebibliography#1{
-  \footnotesize\section*{\footnotesize\sf{REFERENCES}\@mkboth
+  \markright{References}\footnotesize\section*{\footnotesize\sf{REFERENCES}\@mkboth
   {\uppercase{\refname}}{\uppercase{\refname}}}%
    \pdfbookmark{References}{Ref}
    \list
