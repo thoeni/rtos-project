@@ -76,7 +76,7 @@ PRODUCT_PACKAGES += bbqued
 \definecolor{lightgray}{gray}{0.93}
   \par\noindent\colorbox{lightgray}{%
     \begin{minipage}{0.98\textwidth}
-		\textsc{Add the process to} \texttt{init.d}:\\
+		\textsc{Adding the process to} \texttt{init.d}:\\
 		After building the system, will be possible to run the daemon by accessing the system through \texttt{adb shell} command, and running the \texttt{bbqued} command (since it will be placed straight into \texttt{/bin} folder.\\
 		If you want your process to be started at system startup, you can add it to the \texttt{init.d} file that you should have copied before as follows
 		\vskip\baselineskip%
@@ -90,4 +90,65 @@ PRODUCT_PACKAGES += bbqued
   \vskip\baselineskip%
 To build this module, we have to make the system, as usual.
 \subsection{Wrapping native library with JNI}
-JNI is the glue
+JNI is the glue to let C and Java talking to each other. This code will be put into directory \texttt{/p2012-common/framework/}, divided int two sub-directories as follows:
+\begin{verbatim}
+bbque_jni/
+|---Android.mk
+|---java/
+|   |---Android.mk
+|   |---com/
+|   |   |---bbque/
+|   |       |---android/
+|   |           |---lib/
+|   |               |---LibBbqueException.java
+|   |               |---LibBbque.java
+|   |---com.bbque.android.lib.xml
+|---jni/
+    |---Android.mk
+    |---com_bbque_android_lib_LibBbque.c
+    |---com_bbque_android_lib_LibBbque.h
+\end{verbatim}
+Create the \texttt{LibBbque.java} class, which contains just the declarations of the methods we want to expose to Java world (which must be declared as \texttt{public native}), as follows:
+\begin{verbatim}
+public native static int getNumCore() throws LibBbqueException;
+\end{verbatim}
+and the declaration of the jni library:
+\begin{verbatim}
+static {
+   System.loadLibrary("bbque_jni");
+}
+\end{verbatim}
+The \texttt{xml} file contains the declaration of permissions for the library, that will be generated as \texttt{jar} file during the next step:
+\begin{verbatim}
+<library name="com.bbque.android.lib"
+    file="/system/framework/com.bbque.android.lib.jar"/>
+\end{verbatim}
+And finally the \texttt{Android.mk} file, under \texttt{java/} directory, h whicis quite elaborate, states all the instructions to properly compile the whole module that will be therefore included into the build process.\\
+Then, the \texttt{make} command will process the module, and will generate a \texttt{classes.jar} file, which is needed by the next step, as input parameter to the \texttt{javah -jni} command, that generates the JNI header file.
+\begin{verbatim}
+$ javah -jni \
+        -d device/bosp/p2012-common/framework/bbque_jni/jni/ \
+        -classpath out/target/common/obj/JAVA_LIBRARIES/\ 
+        com.bbque.android.lib_intermediates/classes-full-debug.jar \
+        com.bbque.android.lib.LibBbque
+\end{verbatim}
+The first line suggests where the output header file will be placed, the second line gives as input the jar shared library generated during the previous step.\\
+An example of an auto-generated signature, within the header file, is
+\begin{verbatim}
+JNIEXPORT jint JNICALL Java_com_bbque_android_lib_LiBbque_getNumCore
+  (JNIEnv *, jclass);
+\end{verbatim}
+The next step consists into the implementation of the header file just generated, for example as follows:
+\begin{verbatim}
+JNIEXPORT jint JNICALL Java_com_bbque_android_lib_LiBbque_getNumCore
+  (JNIEnv *env, jclass clazz) {
+  jint result = get_core_availability();
+  [...]
+  }
+\end{verbatim}
+It's easy to realize that this is just a wrapping of the C native library.\\
+After properly compiling the usual configuration files, \texttt{Android.mk} and the main \textit{makefile} \texttt{bosp\_p2012.mk} with the new modules to include, the system can be built again, and the native library is now accessible through \texttt{LibBbque} class:
+\begin{verbatim}
+LibBbque.getNumCore();
+\end{verbatim}
+We can say that the java call, so far, works within the upper right part of Fig. \ref{fig:projectoverview}, by calling Java methods on the \texttt{LibBbque} class (pink box).
