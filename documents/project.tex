@@ -1,5 +1,5 @@
-\markright{Customising}
-\section{Customising}
+\markright{System setup}
+\section{System setup}
 \label{Customising}
 This work, as stated in the abstract, aims to implement a native daemon (constantly running) which will be exposed as a System Service to the Java application layer. The Java application will be able to communicate with the daemon through JNI and the native library, and the other way around will be implemented by using a callback function.\\
 Since this project is focused on understanding the basics of Android, to afterwards integrate a native RTRM application as a System Service - therefore accessible by the Java environment - I decided to implement this simple daemon as a dummy-RTRM which will communicate with the application the number of available "cores" (actually will be just an \texttt{int}) and allow it to "require" or "release" cores (with a sort of \texttt{core++} and \texttt{core--} functions).
@@ -30,7 +30,7 @@ Let's briefly see what these folders contain:
   \par\noindent\colorbox{lightgray}{%
     \begin{minipage}{0.953\textwidth}
 		\textsc{Good to know}:\\
-		Any C/C++ source put into this folder (along with the proper \texttt{Android.mk} configuration file), will be compiled by Android's building system and put into device's \texttt{/system/bin} folder, so that will be ready to run within the environment.
+		Any C/C++ source put into this folder (along with the proper \texttt{Android.mk} configuration file - see Section \ref{build-system}), will be compiled by Android's building system as a module, and put into device's \texttt{/system/bin} folder, so that will be ready to run within the environment.
     \end{minipage}%
   }%
   \vskip\baselineskip%
@@ -39,9 +39,10 @@ Let's briefly see what these folders contain:
 \end{itemize}
 Once we have this basic structure, we can go deeper into details of the configuration files needed by the \textit{make system}.
 \subsection{Configuration files}
+\label{configuration}
 We are mainly operating inside the \texttt{p2012} folder so, unless specified, this will be our working directory for this section.
-\begin{itemize}
-\item At first, we create a file named \texttt{vendorsetup.sh}, which will contain the name of the \textit{lunch-combo} we want to associate to our new device. My file would look like this:
+\begin{enumerate}
+\item \label{item-and-vendors} At first, we create a file named \texttt{vendorsetup.sh}, which will contain the name of the \textit{lunch-combo} we want to associate to our new device. My file would look like this:
 \begin{verbatim}
 	add_lunch_combo full_bosp_p2012-eng
 \end{verbatim}
@@ -51,11 +52,11 @@ From within the main \texttt{aosp} directory, if you open a shell and launch the
 	$. build/envsetup.sh
 \end{verbatim}
 you should see the system including the new configuration.
-\item The file \texttt{AndroidProducts.mk} contains the reference to the specific product build makefiles, therefore we indicate here this:
+\item \label{item-and-prod} The file \texttt{AndroidProducts.mk} contains the reference to the specific product build makefiles, therefore we indicate here this:
 \begin{verbatim}
 	PRODUCT_MAKEFILES := $(LOCAL_DIR)/full_p2012.mk
 \end{verbatim}
-\item And here a piece of our \texttt{full\_p2012.mk} file
+\item \label{item-and-makefile} And here a piece of our \texttt{full\_p2012.mk} file
 \begin{verbatim}
 	$(call inherit-product, $(SRC_TARGET_DIR)/product/
 	                        languages_full.mk)
@@ -72,5 +73,79 @@ More "flavors" can be found into
 \begin{verbatim}
 	/aosp/build/target/product/
 \end{verbatim}
-
-\end{itemize}
+\item Then we can copy/paste some basic configuration files from Android's main branch, in this way:
+\begin{verbatim}
+	$ cp build/target/board/generic/BoardConfig.mk \
+	     device/bosp/p2012/.
+	$ cp build/target/board/generic/AndroidBoard.mk \
+	     device/bosp/p2012/.
+	$ cp build/target/board/generic/device.mk \
+	     device/bosp/p2012/.
+	$ cp build/target/board/generic/system.prop \
+	     device/bosp/p2012/.
+\end{verbatim}
+\item A further step for creating our own platform version, should be to generate platform signing keys, despite this is needed to pass \textit{Compatibility Test Suite}. At first, we create a local variable with our generalities:
+\begin{verbatim}
+	$ SIGNER="/C=IT/ST=Italy/L=Milan
+	          /O=Polimi/OU=Android
+	          /CN=Android Platform Signer
+	          /emailAddress=john.doe@polimi.com"
+\end{verbatim}
+Then we generate keys with our signer details:
+\begin{verbatim}
+	$ echo | development/tools/make_key \
+	         build/target/product/security/platform "$SIGNER"
+\end{verbatim}
+And run the same command three times more, replacing the \texttt{platform} word with: \texttt{shared}, \texttt{media}, \texttt{testkey}.\\
+This step is required for the \textit{Compatibility Test Suite}.
+\item We can now \textbf{build our own Android system}, which - so far - is just a simple \textit{Vanilla Android}. Any time you have to compile, be sure that you've run the following commands, in this order:
+\begin{verbatim}
+	$ . build/envsetup.sh
+	$ lunch full_bosp_p2012-eng #here the build name you chose
+	$ export USE_CCACHE=1
+	$ make -j8
+\end{verbatim}
+\end{enumerate}
+\definecolor{lightgray}{gray}{0.93}
+  \vskip\baselineskip%
+  \par\noindent\colorbox{lightgray}{%
+    \begin{minipage}{0.98\textwidth}
+		\textsc{Good to know}:\\
+		At this point it's possible even to \textbf{customise the kernel}, nevertheless we don't need it. An example of the procedure to have it, can be easily found online.
+    \end{minipage}%
+  }%
+  \vskip\baselineskip%
+\subsubsection{Android build system}
+\label{build-system}
+Android build system mainly relies on a huge number of \textit{makefiles} named \textit{Android.mk}. Unlike Linux recursive make approach, Android's build system is based on the search of \texttt{Android.mk} files into any folder below the main one: whenever found - unless explicitly specified in the file - the search doesn't go any deeper. At the end of the process, all the information contained into those configuration files are summed up to a single file, which is the one used by the make process to compile each \textit{module} of the system. In Android's context, the word \textit{module} indicates any component of the AOSP that needs to be built. This might be a binary, an app package, a library, etc.\\
+After typing \texttt{make} the system will hang up for a while with no output: during this time it's just assembling the final configuration file out of all the \texttt{Android.mk} files it has found.\\
+Let's see how the configuration files should be organized inside our tree, to properly build:
+\begin{verbatim}
+├── p2012/
+│   ├1── AndroidBoard.mk
+│   ├2── AndroidProducts.mk
+│   ├ ── app/
+│   ├3── BoardConfig.mk
+│   ├4── device.mk
+│   ├5── full_p2012.mk
+│   ├6── system.prop
+│   └7── vendorsetup.sh
+├── p2012-common/
+│   ├ ── app/
+│   ├ ── bin/
+│   ├8── bosp_p2012.mk
+│   ├ ── framework/
+│   ├9── init.rc
+│   └ ── lib/
+\end{verbatim}
+Files have been numbered to briefly explain their meaning (or, at least, what we do need to know concerning our work).
+\begin{enumerate}
+	\item[1,3,4,6] configuration files that we just copy/paste-d from the default branch, contain information about the device to emulate, used to set-up the building system.
+	\item[2] reference to the main makefile (in our case, \texttt{full\_p2012.mk}) - see \ref{configuration} (\ref{item-and-prod})
+	\item[5] Main makefile, contains an \texttt{include} directive to import other makefiles, and information about packages that will be built within the system-to-be - see \ref{configuration} (\ref{item-and-makefile})
+	\item[7] see \ref{configuration} (\ref{item-and-vendors})
+	\item[8] makefile which is local to the \texttt{p2012-common} folder. This is included by \texttt{5}, as being appended
+	\item[9] we are going to see later what this file will contain, but basically we just need it to launch our native daemon during the startup phase.
+\end{enumerate}
+More detailed information about build system can be found into a file contained in AOSP directory: \texttt{build/core/build-system.html}\\
+Now we set-up the system, we can start the implementation of our code.

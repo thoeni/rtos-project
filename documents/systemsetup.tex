@@ -2,7 +2,7 @@
 \section{System setup}
 \label{setup}
 Basically, to have a foundation we can work on, a ready-to-run AOSP system should be setup and properly configured. The most important instructions can be found at the AOSP project website: \texttt{http://source.android.com/}\\
-In this section the basic steps will be presented, especially highlighting the main issues that have been encountered during the development.\\
+In this section the basic steps will be presented, especially highlighting the main issues that have been encountered during the development.
 \subsection{Initialize the build environment}
 The on-line guide to initialize the system can be found at:\\
 \texttt{http://source.android.com/source/initializing.html}\\
@@ -31,7 +31,7 @@ Add the new Java to your shell environment's \texttt{\$PATH} so it takes priorit
 	\end{verbatim}
 If you relaunch your terminal (do it) you should be able to see the change with the command \texttt{java -version}
 \item \textbf{GCC - The Gnu Compiler Collection}\\
-By default I found on my system the latest version of the \texttt{gcc} compiler, which - at the time of this writing is the 4.6: this version presented some fatal errors which didn't let me complete the compilation. A solution has been to install the 4.4 version (as for JDK, two different versions can coexist on the same system).
+By default I found on my system the latest version of the \texttt{gcc} compiler, which - at the time of this writing is the \texttt{4.6}: this version works smoothly with Android Jelly Bean, but presented some fatal errors which didn't let me complete the compilation on Icecream Sandwich. A solution - for the latter - has been to install the \texttt{4.4} version (as for JDK, two different versions can coexist on the same system).
 	\begin{verbatim}
 		$ sudo apt-get install gcc-4.4 g++-4.4 \
 		                       g++-4.4-multilib gcc-4.4-multilib
@@ -46,8 +46,8 @@ This works, with the watchfulness of explicitly declare you want to use this spe
     \end{minipage}%
   }%
   \vskip\baselineskip%
-I put stress on this because I'm sure it can save you time, and prevent you from banging the desktop with your forehead.\\
-The \texttt{-j8} option tells the compiler to launch 8 parallel threads, therefore if you are compiling on a multi-core architecture, this may save you quite a lot of time.
+I put stress on this because I'm sure it can save you time, and prevent you from banging the desktop with your forehead, in case you're building an older version of Android.\\
+The \texttt{-j8} option tells the compiler to launch 8 parallel threads, therefore if you are compiling on a multi-core architecture, this may save you quite a lot of time: you can choose the value that better fits your cpu architecture.
 \item \textbf{Libraries}\\
 Since I built and installed other packages during my work, I experienced that the most commonly replaced ones were:
 	\begin{itemize}
@@ -61,7 +61,10 @@ Since I built and installed other packages during my work, I experienced that th
 	\end{itemize}
 Therefore, if the compilation - that previously was working - suddenly doesn't work anymore, check whether you still have those two libraries and their versions.
 \end{itemize}
-Last suggestion, as the AOSP website says, it's convenient enabling the \texttt{CCACHE} option, to save time during the following compilations.
+Last suggestion, as the AOSP website says, it's recommended enabling the \texttt{CCACHE} option, to save time during the following compilations. You can do it by executing the following bash command:
+\begin{verbatim}
+$ export USE_CCACHE=1
+\end{verbatim}
 \subsection{Downloading the source tree}
 All instructions to download the source files can be found at this address:\\
 \texttt{http://source.android.com/source/downloading.html}

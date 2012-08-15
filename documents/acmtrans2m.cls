@@ -490,9 +490,12 @@
 \def\subsection{\@ucheadfalse
  \@startsection{subsection}{2}{\z@}{-8pt plus -2pt minus 
  -1pt}{4pt}{\reset@font\normalsize\sffamily}}
-\def\subsubsection{\@ucheadfalse
- \@startsection{subsubsection}{3}{\parindent}{6pt plus 
-1pt}{-5pt}{\reset@font\normalsize\itshape}}
+ \def\subsubsection{\@ucheadfalse
+ \@startsection{subsubsection}{2}{\z@}{-8pt plus -2pt minus 
+ -1pt}{4pt}{\reset@font\normalsize\itshape}}
+%\def\subsubsection{\@ucheadfalse
+% \@startsection{subsubsection}{3}{\parindent}{6pt plus
+%1pt}{-5pt}{\reset@font\normalsize\itshape}}
 \def\paragraph{\@ucheadfalse
  \@startsection{paragraph}{3}{\parindent}{6pt plus 
 1pt}{-5pt}{\reset@font\normalsize\itshape}}
