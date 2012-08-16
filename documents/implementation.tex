@@ -19,7 +19,7 @@ As shortly described in the previous section, this small example relies on a nat
 	\caption{Project flow overview}
 	\label{fig:projectoverview}
 \end{figure}
-As a very high level consideration, the modules on a \textbf{light blue} background run natively, while the modules over a \textbf{yellow} background run under Dalvik (therefore Java-coded). The \textbf{green} boxes are libraries, and the ones with a red stroke are included by our project. The \textbf{lilac} boxes are the two parts of our service, that communicate each other through binder. The \textbf{pink} box represents the Java module corresponding to our native library: the glue between them comes from JNI code. The flow indicated by the numbered \textbf{pink arrows} is executed during the startup phase.
+As a very high-level consideration, the modules on a \textbf{light blue} background run natively, while the modules over a \textbf{yellow} background run under Dalvik (therefore Java-coded). The \textbf{green} boxes are libraries, and the ones with a red stroke are included by our project. The \textbf{lilac} boxes are the two parts of our service, that communicate each other through binder. The \textbf{pink} box represents the Java module corresponding to our native library: the glue between them comes from JNI code. The flow indicated by the numbered \textbf{pink arrows} is executed during the startup phase.
 \subsection{Native library}
 Working directory for native library is \texttt{device/bosp/p2012-common/lib}.
 The source tree for this directory is
@@ -152,3 +152,83 @@ After properly compiling the usual configuration files, \texttt{Android.mk} and 
 LibBbque.getNumCore();
 \end{verbatim}
 We can say that the java call, so far, works within the upper right part of Fig. \ref{fig:projectoverview}, by calling Java methods on the \texttt{LibBbque} class (pink box).
+\subsection{Binding the library with the Interface}
+To let application-layer activities use the Java library previously created, an interface should be created, which will access to the library through \textit{Binder's} help.\\
+To have an idea of the part of the flow in Fig. \ref{fig:projectoverview} we are working to, consider the greyed-out red-dashed-stroked area in Fig. \ref{fig:projectoverview_binder}.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[scale=.505]{images/project_overview_binder.pdf}
+	\caption{Interface-Library through binder}
+	\label{fig:projectoverview_binder}
+\end{figure}
+\definecolor{lightgray}{gray}{0.93}
+  \par\noindent\colorbox{lightgray}{%
+    \begin{minipage}{0.98\textwidth}
+		\textsc{RPC and Android Interface Definition Language}:\\
+		Into Android, we do not use the Binder mechanism directly. Instead, we "define and interact with interfaces using Android's Interface Definition Language (IDL).
+Interface definitions are usually stored in an \texttt{.aidl} file and are processed by the aidl tool to generate the proper stubs and marshalling/unmarshalling code required to transfer
+objects and data back and forth using the Binder mechanism." \cite{embandroid}
+    \end{minipage}%
+  }%
+  \vskip\baselineskip%
+The working directory for this part is \texttt{bosp/p2012-common/framework/} where a new folder to include the interface and its manager has to be created (e.g. \texttt{bbqueservice}).
+\begin{verbatim}
+bbqueservice/
+|---Android.mk
+|---com/
+|   |---bbque/
+|       |---android/
+|           |---service/
+|               |---BbqueManager.java
+|               |---IBbqueService.aidl
+|---com.bbque.android.service.xml
+\end{verbatim}
+As seen for the previous module, \texttt{xml} file contains permissions declaration, and \texttt{Android.mk} file contains instructions for the building system to properly compile the module. Going deeper into folder's tree, there are two files:
+\begin{itemize}
+	\item \texttt{IBbqueService.aidl}\\
+		As stated in the grey-coloured note above, this interface contains the methods' definitions. An example for our testing case is
+		\begin{verbatim}
+			interface IBbqueService {
+			   int getNumCore();
+			   [...]
+			}
+		\end{verbatim}
+	\item \texttt{BbqueManager.java}\\
+	This class is a proxy to our bounded service, and will be instantiated bu any Application that will need to access to the Interface. It mainly returns the interface to the caller, as follows:
+	\begin{verbatim}
+		[...]
+		import android.os.IBinder;
+		import android.os.ServiceManager;
+		[...]
+		private final IBbqueService service;
+		this.service = IBbqueService.Stub.asInterface(
+		               ServiceManager.getService(REMOTE_SERVICE_NAME));
+		[...]
+	\end{verbatim}
+\end{itemize}
+\subsection{ServiceManager registering and Interface implementation}
+Regarding the previous lines, to let the \texttt{BbqueManager} get the desired service, by calling the \texttt{ServiceManager.getService(...)} method, we must register our service into the Service Manager, otherwise it can't find - and therefore return - it to the caller. This operation is performed by a class called \texttt{BbqueServiceApp}. In Fig. \ref{fig:projectoverview_serviceapp} a portion of Fig. \ref{fig:projectoverview} focusing on this part can be seen.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[scale=.505]{images/project_overview_IServiceImpl.pdf}
+	\caption{Interaction ServiceApp - ServiceManager}
+	\label{fig:projectoverview_serviceapp}
+\end{figure}
+The working directory is \texttt{bosp/p2012-common/app/}. Follows a tree summary within this folder.
+\begin{verbatim}
+app/
+|---Android.mk
+|---BbqueService
+    |---AndroidManifest.xml
+    |---Android.mk
+    |---res
+    |   |---values
+    |       |---strings.xml
+    |---src
+        |---com
+            |---bbque
+                |---android
+                    |---bbqueservice
+                        |---BbqueServiceApp.java
+                        |---IBbqueServiceImpl.java
+\end{verbatim}
