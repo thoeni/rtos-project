@@ -221,9 +221,6 @@ app/
 |---BbqueService
     |---AndroidManifest.xml
     |---Android.mk
-    |---res
-    |   |---values
-    |       |---strings.xml
     |---src
         |---com
             |---bbque
@@ -232,3 +229,47 @@ app/
                         |---BbqueServiceApp.java
                         |---IBbqueServiceImpl.java
 \end{verbatim}
+\texttt{AndroidManifest.xml} file contains the declarations of the server application.\\
+The inner \texttt{BbqueServiceApp.java} class, is declared as
+\begin{verbatim}
+public class BbqueServiceApp extends Application
+\end{verbatim}
+and \textit{overloads} the \texttt{onLoad} inherited method, with the \texttt{IBbqueServiceImpl} object creation, and its registration to the ServiceManager (pink arrows in Fig. \ref{fig:projectoverview_serviceapp}).
+\begin{verbatim}
+this.serviceImpl = new IBbqueServiceImpl(this);
+ServiceManager.addService(REMOTE_SERVICE_NAME, this.serviceImpl);
+\end{verbatim}
+The \texttt{IBbqueServiceImpl.java} class, is declared as
+\begin{verbatim}
+class IBbqueServiceImpl extends IBbqueService.Stub
+\end{verbatim}
+and defines a constructor which takes as input a \texttt{Context} variable, and a simple \texttt{return} statement for each desired method we want to expose.\\
+Finally, the last step before another building process, is to add this package to the main \textit{makefile} that, in our case, is \texttt{p2012-common/bosp\_p2012.mk}:
+\begin{verbatim}
+PRODUCT_PACKAGES += BbqueService
+\end{verbatim}
+As already seen before, the \texttt{+=} symbol, appends this last definition to all the others, to contribute to the creation of the main \textit{makefile}.\\
+The log of Android, during the startup, shows the following lines:
+\begin{verbatim}
+I/ActivityManager(  147): Start proc com.bbque.android.bbqueservice
+               for added application com.bbque.android.bbqueservice:
+               pid=242 uid=1000 gids={1015, 3002, 3001, 3003, 1028}
+               
+D/BbqueServiceApp(  242): Registered 
+               [com.bbque.android.bbqueservice.IBbqueServiceImpl] as
+               [com.bbque.android.service.IBbqueService]
+\end{verbatim}
+\subsection{Application layer}
+At this phase, everything is ready to be used by any Android Application/Activity. In Fig. \ref{fig:screenshot} a very simple application made to test the calls' flow, and in Fig. \ref{fig:shell} the \texttt{\$ adb logcat} output for a \texttt{get\_core\_availability()} call.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[scale=.505]{images/screenshot_duo.png}
+	\caption{Home screen (left), Sample app (right)}
+	\label{fig:screenshot}
+\end{figure}
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[scale=.505]{images/shell.png}
+	\caption{Shell}
+	\label{fig:shell}
+\end{figure}
