@@ -10,5 +10,5 @@ interface IBbqueService {
 	int getMoreCore();
 	int getLessCore();
 	int freeCore();
-	int sendMessageToApp(String message);
+	int sendMessageToApp();
 }

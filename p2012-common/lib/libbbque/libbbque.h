@@ -9,7 +9,8 @@ extern int get_core_availability();
 extern int ask_more_core();
 extern int ask_less_core();
 extern int free_core();
-extern int send_message_to_app(char*);
+extern int send_message_to_app(JNIEnv, jclass);
+//extern void activityCallback(char*);
 
 #ifdef __cplusplus
 }  /* End of the 'extern "C"' block */

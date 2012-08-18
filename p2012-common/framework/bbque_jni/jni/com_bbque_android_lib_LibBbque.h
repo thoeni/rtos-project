@@ -42,10 +42,10 @@ JNIEXPORT jint JNICALL Java_com_bbque_android_lib_LibBbque_freeCore
 /*
  * Class:     com_bbque_android_lib_LibBbque
  * Method:    sendMessageToApp
- * Signature: (Ljava/lang/String;)I
+ * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_com_bbque_android_lib_LibBbque_sendMessageToApp
-  (JNIEnv *, jclass, jstring);
+  (JNIEnv *, jclass);
 
 #ifdef __cplusplus
 }

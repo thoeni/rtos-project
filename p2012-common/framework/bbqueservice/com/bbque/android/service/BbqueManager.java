@@ -54,11 +54,11 @@ public class BbqueManager {
     }
   }
   
-  public int sendMessageToApp(String message) {
+  public int sendMessageToApp() {
     try {
-      return this.service.sendMessageToApp(message);
+      return this.service.sendMessageToApp();
     } catch (RemoteException e) {
-      throw new RuntimeException("Failed to sendMessageToApp("+message+")", e);
+      throw new RuntimeException("Failed to sendMessageToApp()", e);
     }
   }
 }

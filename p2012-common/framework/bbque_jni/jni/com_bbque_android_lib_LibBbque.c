@@ -18,8 +18,6 @@ JNIEXPORT jint JNICALL Java_com_bbque_android_lib_LibBbque_getNumCore
   return result;
 }
 
-extern int send_message_to_app(char*);
-
 JNIEXPORT jint JNICALL Java_com_bbque_android_lib_LibBbque_getMoreCore
   (JNIEnv *env, jclass clazz) {
   jint result = ask_more_core();
@@ -48,8 +46,8 @@ JNIEXPORT jint JNICALL Java_com_bbque_android_lib_LibBbque_freeCore
 }
 
 JNIEXPORT jint JNICALL Java_com_bbque_android_lib_LibBbque_sendMessageToApp
-  (JNIEnv *env, jclass clazz, jstring message) {
-  jint result = send_message_to_app(message);
+  (JNIEnv *env, jclass clazz) {
+  jint result = send_message_to_app(env, clazz);
   if (result < 0) {
     ThrowLibBbqueException(env, "Failed to send message to App");
   }

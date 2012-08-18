@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <android/log.h>
 #include	<errno.h>
+#include  <libbbque.h>
 
 #define LOG_TAG "BBQUED DAEMON"
 #define SERVER_PORT 1313

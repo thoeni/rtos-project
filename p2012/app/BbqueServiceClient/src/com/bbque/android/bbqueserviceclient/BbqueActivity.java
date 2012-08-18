@@ -82,6 +82,7 @@ public class BbqueActivity extends Activity implements Runnable, View.OnClickLis
    
   public void run() {
     this.updateOutput();
+    this.bbqueManager.sendMessageToApp();
   //  this.handler.postDelayed(this, 2000);
   }
 }

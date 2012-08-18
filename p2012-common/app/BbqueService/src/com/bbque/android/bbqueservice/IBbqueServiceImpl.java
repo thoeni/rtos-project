@@ -31,7 +31,7 @@ class IBbqueServiceImpl extends IBbqueService.Stub {
     return LibBbque.freeCore();
   }
   
-  public int sendMessageToApp(String message) {
-  	 return LibBbque.sendMessageToApp(message);
+  public int sendMessageToApp() {
+  	 return LibBbque.sendMessageToApp();
   }
 }
