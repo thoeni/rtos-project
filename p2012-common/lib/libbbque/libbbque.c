@@ -100,7 +100,7 @@ extern int send_message_to_app(JNIEnv *env, jclass clazz) {
 	else
 		__android_log_write(ANDROID_LOG_DEBUG, LOG_TAG, "env and clazz DOES NOT exist!");
 	
-	jmethodID mid = (*env)->GetMethodID(env, clazz, "appCallback", "()V");
+	jmethodID mid = (*env)->GetStaticMethodID(env, clazz, "appCallback", "()V");
 	__android_log_write(ANDROID_LOG_DEBUG, LOG_TAG, "getMethodID activityCallback method not found");
 	(*env)->CallStaticVoidMethod(env, clazz, mid);
 	__android_log_write(ANDROID_LOG_DEBUG, LOG_TAG, "...method called back!");
