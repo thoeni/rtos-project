@@ -25,11 +25,11 @@ Working directory for native library is \texttt{device/bosp/p2012-common/lib}.
 The source tree for this directory is
 \begin{verbatim}
 lib/
-├── Android.mk
-└── libbbque/
-    ├── Android.mk
-    ├── libbbque.c
-    └── libbbque.h
+|---Android.mk
+|---libbbque/
+    |---Android.mk
+    |---libbbque.c
+    |---libbbque.h
 \end{verbatim}
 The outermost \texttt{Android.mk} file contains just the instruction - for the building system - to search deeper for other \textit{makefiles}
 \begin{verbatim}
@@ -62,10 +62,10 @@ $ make -j8 libbbque
 Working directory for native daemon is \texttt{device/bosp/p2012-common/bin}.
 \begin{verbatim}
 bin/
-├── Android.mk
-├── bbqued/
-│   ├── Android.mk
-│   └── bbqued.c
+|---Android.mk
+|---bbqued/
+|   |---Android.mk
+|   |---bbqued.c
 \end{verbatim}
 The outermost \texttt{Android.mk} file is identical to the \texttt{lib/} case, while the inner one contains instructions to properly build the daemon module.\\
 The \texttt{bbqued.c} file, which imports the \texttt{libbque.h} library, implements the server side of our test, which creates a \textit{socket} and waits for any incoming connection. When a connection is received, it launches a thread (implemented by using \texttt{pthread} library): each thread reads/writes an \texttt{int} variable which is local to the main process. As done for the library, the daemon module must be added to the \texttt{/p2012-common/bosp\_p2012.mk} file:
@@ -90,6 +90,7 @@ PRODUCT_PACKAGES += bbqued
   \vskip\baselineskip%
 To build this module, we have to make the system, as usual.
 \subsection{Wrapping native library with JNI}
+\label{JNIwrapping}
 JNI is the glue to let C and Java talking to each other. This code will be put into directory \texttt{/p2012-common/framework/}, divided int two sub-directories as follows:
 \begin{verbatim}
 bbque_jni/
@@ -249,7 +250,7 @@ Finally, the last step before another building process, is to add this package t
 PRODUCT_PACKAGES += BbqueService
 \end{verbatim}
 As already seen before, the \texttt{+=} symbol, appends this last definition to all the others, to contribute to the creation of the main \textit{makefile}.\\
-The log of Android, during the startup, shows the following lines:
+Android's log, during the startup, shows the following lines:
 \begin{verbatim}
 I/ActivityManager(  147): Start proc com.bbque.android.bbqueservice
                for added application com.bbque.android.bbqueservice:
@@ -270,6 +271,83 @@ At this phase, everything is ready to be used by any Android Application/Activit
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=.505]{images/shell.png}
-	\caption{Shell}
+	\caption{Shell - Straight call}
 	\label{fig:shell}
 \end{figure}
+\subsection{The other way around - callback}
+If we wanted to see an example of how a similar call can go the opposite direction, we should implement a C-to-Java callback paradigm.\\
+As long as I've seen, to achieve this result, the \textit{callback} approach requires - as the word itself clearly suggests - a first call from Java to C. Doing so, Java will pass to the native code (as previously seen in \ref{JNIwrapping}) some parameters as \texttt{JNIEnv} and \texttt{jclass}. Through these pointers, and some convenient specific functions, the native code is able to \textit{callback} a method coded within the Java class that made the first call: as long as the native process can hold the proper references to JNIEnv (or, actually, the global JavaVM, from which it can get back the environment) it will be able to make asynchronous calls to the Java methods belonging to the caller.\\
+We'll briefly see the code used to achieve this which, at the moment of this writing, is contained into the Git \texttt{jb-callback} branch.
+\begin{enumerate}
+	\item The Java library \texttt{LibBbque} class (seen in \ref{JNIwrapping}) contains the following methods:
+	\begin{verbatim}
+		public native static int sendMessageToApp();
+		
+		public static void appCallback() {
+		   System.out.println("JNI works.");
+		}
+	\end{verbatim}
+	The former is needed to call the native library, and pass it the JNI parameters, while the latter is the class' method that C library will execute.
+	\item As done before, after a \texttt{make} command, the JNI header file will be generated through a \texttt{javah -jni [...]} command. The result is
+	\begin{verbatim}
+		/*
+		 * Class:     com_bbque_android_lib_LibBbque
+		 * Method:    sendMessageToApp
+		 * Signature: ()I
+		 */
+		 
+		JNIEXPORT jint JNICALL
+		          Java_com_bbque_android_lib_LibBbque_sendMessageToApp
+		          (JNIEnv *, jclass);
+	\end{verbatim}
+	Its implementation will include the C native library, and call the native function:
+	\begin{verbatim}
+		#include <libbbque.h>
+		#include "com_bbque_android_lib_LibBbque.h"
+		[...]
+		JNIEXPORT jint JNICALL
+		          Java_com_bbque_android_lib_LibBbque_sendMessageToApp
+		          (JNIEnv *env, jclass clazz) {
+		             jint result = send_message_to_app(env, clazz);
+		          [...]
+		          }
+	\end{verbatim}
+	\item The callback implementation is mainly coded into this last native piece of code: the native library, \texttt{libbbque.c}
+	\begin{verbatim}
+		extern int send_message_to_app(JNIEnv *env, jclass clazz) {
+		  __android_log_write(ANDROID_LOG_INFO, LOG_TAG,
+		                      "Called send_message_to_app()");
+		  jmethodID mid = (*env)->GetStaticMethodID (env, 
+		                                             clazz,
+		                                             "appCallback",
+		                                             "()V");
+		  (*env)->CallStaticVoidMethod(env, clazz, mid);
+		  __android_log_write(ANDROID_LOG_DEBUG, LOG_TAG,
+		                      "...method called back!");	
+		  return 0;
+		}
+	\end{verbatim}
+	This code allows a synchronous one-shot callback: the \texttt{GetStaticMethodId} looks for the \texttt{appCallback} method, with \texttt{()V} signature into the caller class: this means it will search for a \texttt{static void appCallback()} method. Its output fill be saved to \texttt{jmethodID} variable. This variable will be given as input parameter to the \texttt{CallStaticVoidMethod} method, to execute the callback.
+	\item To test this implementation, we can let the Activity call the Java method which \textit{"opens"} the communication with C native library, by sending down the stack its JNIEnv and jclass data, as follows:
+	\begin{verbatim}
+		 public void run() {
+		   [...]
+		   this.bbqueManager.sendMessageToApp();
+		 }
+	\end{verbatim}
+	The result of Activity launching, into the \texttt{catlog} screen is shown in Fig. \ref{fig:shell2}
+\end{enumerate}
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[scale=.505]{images/shell2.png}
+	\caption{Shell - callback}
+	\label{fig:shell2}
+\end{figure}
+The code of the native library could also save some global references (to be used asynchronously by any running process) as follows:
+\begin{verbatim}
+	//Saving GlobalJVM
+	(*env)->GetJavaVM(env, &global_jvm);
+	//Saving GlobalClass
+	libbbque_global_class = (*env)->NewGlobalRef(env, clazz);
+\end{verbatim}
+These references should be passed to any daemon or running process, for future use, before the library loses them. This passage hasn't been implemented yet.
