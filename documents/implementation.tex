@@ -8,11 +8,11 @@
 		\textsc{Source Code}:\\
 		The extended and working version of the code presented in this paper can be found on:\\
 		\texttt{https://github.com/thoeni/rtos-project.git}
-		\\There are two branches, the \texttt{main} and the \texttt{icecream} (which has been tested on \texttt{Android 4.0.1\_r1})
+		\\At the time of this writing, there are three branches, the \texttt{main}, the \texttt{icecream} (which has been tested on \texttt{Android 4.0.1\_r1} and the \texttt{jb-callback} which includes the callback from C to Java.)
     \end{minipage}%
   }%
   \vskip\baselineskip%
-As shortly described in the previous section, this small example relies on a native library we'll implement, and a summary of the flow from the Client Application (Activity named BbqueActivity) to the Server (Daemon named bbqued) can be seen in Fig. \ref{fig:projectoverview}.\\
+As shortly described in the previous section, this small example relies on a native library we'll implement, and a summary of the flow from the Client Application (Activity named BbqueActivity) to the Server (Daemon named bbqued) can be seen in Fig.\ref{fig:projectoverview}.\\
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=.432]{images/project_overview.pdf}
@@ -35,7 +35,7 @@ The outermost \texttt{Android.mk} file contains just the instruction - for the b
 \begin{verbatim}
 	include $(call all-subdir-makefiles)
 \end{verbatim}
-The \texttt{libbbque} folder contains the \texttt{.h} header source with library's methods, \texttt{.c} source with library's methods implementation, along with another \texttt{Android.mk} file, which tells to the building system how to build this library module (eg. indicates the source file, the shared libraries to include, the name of the module, its optionality, and so on).\\
+The \texttt{libbbque} folder contains the \texttt{.h} header source with library's methods, \texttt{.c} source with library's methods implementation, along with another \texttt{Android.mk} file, which tells the building system how to build this library module (eg. indicates the source file, the shared libraries to include, the name of the module, its optionality, and so on).\\
 For the sake of clarity, we'll consider as example the
 \begin{verbatim}
 extern int get_core_availability() {
@@ -124,8 +124,8 @@ The \texttt{xml} file contains the declaration of permissions for the library, t
 <library name="com.bbque.android.lib"
     file="/system/framework/com.bbque.android.lib.jar"/>
 \end{verbatim}
-And finally the \texttt{Android.mk} file, under \texttt{java/} directory, h whicis quite elaborate, states all the instructions to properly compile the whole module that will be therefore included into the build process.\\
-Then, the \texttt{make} command will process the module, and will generate a \texttt{classes.jar} file, which is needed by the next step, as input parameter to the \texttt{javah -jni} command, that generates the JNI header file.
+And finally the \texttt{Android.mk} file, under \texttt{java/} directory, which is quite elaborate, states all the instructions to properly compile the whole module that will be therefore included into the build process.\\
+Then, the \texttt{make} command will process the module, and will generate a jar file (tipically \texttt{classes-full-debug.jar}), which is needed by the next step, as input parameter to the \texttt{javah -jni} command, that generates the JNI header file.
 \begin{verbatim}
 $ javah -jni \
         -d device/bosp/p2012-common/framework/bbque_jni/jni/ \
@@ -152,10 +152,10 @@ After properly compiling the usual configuration files, \texttt{Android.mk} and 
 \begin{verbatim}
 LibBbque.getNumCore();
 \end{verbatim}
-We can say that the java call, so far, works within the upper right part of Fig. \ref{fig:projectoverview}, by calling Java methods on the \texttt{LibBbque} class (pink box).
+We can say that the java call, so far, works within the upper right part of Fig.\ref{fig:projectoverview}, by calling Java methods on the \texttt{LibBbque} class (pink box).
 \subsection{Binding the library with the Interface}
 To let application-layer activities use the Java library previously created, an interface should be created, which will access to the library through \textit{Binder's} help.\\
-To have an idea of the part of the flow in Fig. \ref{fig:projectoverview} we are working to, consider the greyed-out red-dashed-stroked area in Fig. \ref{fig:projectoverview_binder}.
+To have an idea of the part of the flow in Fig.\ref{fig:projectoverview} we are working to, consider the greyed-out red-dashed-stroked area in Fig.\ref{fig:projectoverview_binder}.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=.505]{images/project_overview_binder.pdf}
@@ -195,7 +195,7 @@ As seen for the previous module, \texttt{xml} file contains permissions declarat
 			}
 		\end{verbatim}
 	\item \texttt{BbqueManager.java}\\
-	This class is a proxy to our bounded service, and will be instantiated bu any Application that will need to access to the Interface. It mainly returns the interface to the caller, as follows:
+	This class is a proxy to our bounded service, and will be instantiated by any Application that will need to access to the Interface. It mainly returns the interface to the caller, as follows:
 	\begin{verbatim}
 		[...]
 		import android.os.IBinder;
@@ -208,7 +208,7 @@ As seen for the previous module, \texttt{xml} file contains permissions declarat
 	\end{verbatim}
 \end{itemize}
 \subsection{ServiceManager registering and Interface implementation}
-Regarding the previous lines, to let the \texttt{BbqueManager} get the desired service, by calling the \texttt{ServiceManager.getService(...)} method, we must register our service into the Service Manager, otherwise it can't find - and therefore return - it to the caller. This operation is performed by a class called \texttt{BbqueServiceApp}. In Fig. \ref{fig:projectoverview_serviceapp} a portion of Fig. \ref{fig:projectoverview} focusing on this part can be seen.
+Regarding the previous lines, to let the \texttt{BbqueManager} get the desired service, by calling the \texttt{ServiceManager.getService(...)} method, we must register our service into the Service Manager, otherwise it can't find - and therefore return - it to the caller. This operation is performed by a class called \texttt{BbqueServiceApp}. In Fig.\ref{fig:projectoverview_serviceapp} a portion of Fig.\ref{fig:projectoverview} focusing on this part can be seen.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=.505]{images/project_overview_IServiceImpl.pdf}
@@ -235,7 +235,7 @@ The inner \texttt{BbqueServiceApp.java} class, is declared as
 \begin{verbatim}
 public class BbqueServiceApp extends Application
 \end{verbatim}
-and \textit{overloads} the \texttt{onLoad} inherited method, with the \texttt{IBbqueServiceImpl} object creation, and its registration to the ServiceManager (pink arrows in Fig. \ref{fig:projectoverview_serviceapp}).
+and \textit{overloads} the \texttt{onLoad} inherited method, with the \texttt{IBbqueServiceImpl} object creation, and its registration to the ServiceManager (pink arrows in Fig.\ref{fig:projectoverview_serviceapp}).
 \begin{verbatim}
 this.serviceImpl = new IBbqueServiceImpl(this);
 ServiceManager.addService(REMOTE_SERVICE_NAME, this.serviceImpl);
@@ -261,7 +261,8 @@ D/BbqueServiceApp(  242): Registered
                [com.bbque.android.service.IBbqueService]
 \end{verbatim}
 \subsection{Application layer}
-At this phase, everything is ready to be used by any Android Application/Activity. In Fig. \ref{fig:screenshot} a very simple application made to test the calls' flow, and in Fig. \ref{fig:shell} the \texttt{\$ adb logcat} output for a \texttt{get\_core\_availability()} call.
+\label{appLayer}
+At this phase, everything is ready to be used by any Android Application/Activity. In Fig.\ref{fig:screenshot} a very simple application made to test the calls' flow, and in Fig.\ref{fig:shell} the \texttt{\$ adb logcat} output for a \texttt{get\_core\_availability()} call.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[scale=.505]{images/screenshot_duo.png}
@@ -275,6 +276,7 @@ At this phase, everything is ready to be used by any Android Application/Activit
 	\label{fig:shell}
 \end{figure}
 \subsection{The other way around - callback}
+\label{callbackSection}
 If we wanted to see an example of how a similar call can go the opposite direction, we should implement a C-to-Java callback paradigm.\\
 As long as I've seen, to achieve this result, the \textit{callback} approach requires - as the word itself clearly suggests - a first call from Java to C. Doing so, Java will pass to the native code (as previously seen in \ref{JNIwrapping}) some parameters as \texttt{JNIEnv} and \texttt{jclass}. Through these pointers, and some convenient specific functions, the native code is able to \textit{callback} a method coded within the Java class that made the first call: as long as the native process can hold the proper references to JNIEnv (or, actually, the global JavaVM, from which it can get back the environment) it will be able to make asynchronous calls to the Java methods belonging to the caller.\\
 We'll briefly see the code used to achieve this which, at the moment of this writing, is contained into the Git \texttt{jb-callback} branch.
@@ -335,7 +337,7 @@ We'll briefly see the code used to achieve this which, at the moment of this wri
 		   this.bbqueManager.sendMessageToApp();
 		 }
 	\end{verbatim}
-	The result of Activity launching, into the \texttt{catlog} screen is shown in Fig. \ref{fig:shell2}
+	The result of Activity launching, into the \texttt{catlog} screen is shown in Fig.\ref{fig:shell2}
 \end{enumerate}
 \begin{figure}[!htb]
 	\centering
@@ -350,4 +352,4 @@ The code of the native library could also save some global references (to be use
 	//Saving GlobalClass
 	libbbque_global_class = (*env)->NewGlobalRef(env, clazz);
 \end{verbatim}
-These references should be passed to any daemon or running process, for future use, before the library loses them. This passage hasn't been implemented yet.
+These references should be passed to any daemon or running process, for future use, before the library loses them. This passage hasn't been implemented.
