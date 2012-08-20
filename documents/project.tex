@@ -8,14 +8,14 @@ The followed approach has been to keep separate the main code from our customise
 In the \texttt{aosp} directory, there's a folder named \texttt{device}, which typically contains folders indicating manifacturers, and into each manifacturer's folder, the specific architecture folder: in our case, the manifacturer folder has been named \texttt{bosp}, and the architecture folder \texttt{p2012}. To properly organize files, we have a main \texttt{p2012} folder, and a \texttt{p2012-common} folder, which contains the largest part of our customised code.
 \begin{verbatim}
 device/
-├── bosp/
-│   ├── p2012/
-│   │   ├── app/
-│   ├── p2012-common/
-│   │   ├── app/
-│   │   ├── bin/
-│   │   ├── framework/
-│   │   └── lib/
+|---bosp/
+|   |---p2012/
+|   |   |---app/
+|   |---p2012-common/
+|   |   |---app/
+|   |   |---bin/
+|   |   |---framework/
+|   |   |---lib/
 \end{verbatim}
 Let's briefly see what these folders contain:
 \begin{itemize}
@@ -121,22 +121,22 @@ Android build system mainly relies on a huge number of \textit{makefiles} named 
 After typing \texttt{make} the system will hang up for a while with no output: during this time it's just assembling the final configuration file out of all the \texttt{Android.mk} files it has found.\\
 Let's see how the configuration files should be organized inside our tree, to properly build:
 \begin{verbatim}
-├── p2012/
-│   ├1── AndroidBoard.mk
-│   ├2── AndroidProducts.mk
-│   ├ ── app/
-│   ├3── BoardConfig.mk
-│   ├4── device.mk
-│   ├5── full_p2012.mk
-│   ├6── system.prop
-│   └7── vendorsetup.sh
-├── p2012-common/
-│   ├ ── app/
-│   ├ ── bin/
-│   ├8── bosp_p2012.mk
-│   ├ ── framework/
-│   ├9── init.rc
-│   └ ── lib/
+|---p2012/
+|   |1---AndroidBoard.mk
+|   |2---AndroidProducts.mk
+|   | ---app/
+|   |3---BoardConfig.mk
+|   |4---device.mk
+|   |5---full_p2012.mk
+|   |6---system.prop
+|   |7---vendorsetup.sh
+|---p2012-common/
+|   | ---app/
+|   | ---bin/
+|   |8---bosp_p2012.mk
+|   | ---framework/
+|   |9---init.rc
+|   | ---lib/
 \end{verbatim}
 Files have been numbered to briefly explain their meaning (or, at least, what we do need to know concerning our work).
 \begin{enumerate}
